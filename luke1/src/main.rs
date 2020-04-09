@@ -18,7 +18,7 @@ fn find_missing_number(max: u32, num_str: &str) -> u32 {
             return n;
         }
     }
-    0
+    unreachable!();
 }
 
 #[cfg(test)]
