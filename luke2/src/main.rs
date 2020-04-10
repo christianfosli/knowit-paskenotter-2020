@@ -1,31 +1,56 @@
+use std::collections::BinaryHeap;
+
 fn main() {
-    let mut n = 2;
-    let mut laylandtall: Vec<u32> = Vec::with_capacity(250);
+    let mut laylandtall = BinaryHeap::new();
+    let mut x = 2;
+    let mut y = 2;
     loop {
-        if is_laylandtall(n) {
-            laylandtall.push(n);
+        let lt = calc_laylandtall(x, y);
+        if laylandtall.len() < 250 {
+            println!(
+                "adding number {}: {} with x {}, y {}",
+                laylandtall.len() + 1,
+                lt,
+                x,
+                y
+            );
+            laylandtall.push(lt);
+        } else if lt < *laylandtall.peek().unwrap() {
+            println!("adding extra {}, {}: {}", x, y, lt);
+            laylandtall.push(lt);
         }
 
-        if laylandtall.len() == 250 {
+        if laylandtall.len() == 1_000_000 {
             break;
         }
 
-        n += 1;
+        if (x).checked_pow((y + 1) as u32).is_some() {
+            y += 1;
+        } else if (x + 1).checked_pow((x + 1) as u32).is_some() {
+            x += 1;
+            y = x;
+        } else {
+            println!(
+                "only overflows left.... exiting with x {}, y {}, count {}",
+                x,
+                y,
+                laylandtall.len()
+            );
+            break;
+        }
     }
 
-    let sum: u32 = laylandtall.iter().sum();
+    println!("getting the sum");
+    for n in laylandtall.iter().rev().take(5) {
+        println!("{}", n);
+    }
+    let sum: u128 = laylandtall.iter().rev().take(250).map(|n| n).sum();
     println!("{}", sum);
 }
 
-fn is_laylandtall(n: u32) -> bool {
-    for x in 2..n {
-        for y in x..n {
-            if x.pow(y) + y.pow(x) == n {
-                return true;
-            }
-        }
-    }
-    false
+fn calc_laylandtall(x: u128, y: u128) -> u128 {
+    println!("calculating x: {}, y: {}", x, y);
+    x.pow(y as u32) + y.pow(x as u32)
 }
 
 #[cfg(test)]
@@ -34,6 +59,6 @@ mod tests {
 
     #[test]
     fn laylandtall_given17_shouldbetrue() {
-        assert!(is_laylandtall(17));
+        assert_eq!(17, calc_laylandtall(3, 2))
     }
 }
