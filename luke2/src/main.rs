@@ -1,4 +1,4 @@
-use std::collections::BinaryHeap;
+use std::{cmp::Reverse, collections::BinaryHeap};
 
 fn main() {
     let mut laylandtall = BinaryHeap::new();
@@ -6,23 +6,7 @@ fn main() {
     let mut y = 2;
     loop {
         let lt = calc_laylandtall(x, y);
-        if laylandtall.len() < 250 {
-            println!(
-                "adding number {}: {} with x {}, y {}",
-                laylandtall.len() + 1,
-                lt,
-                x,
-                y
-            );
-            laylandtall.push(lt);
-        } else if lt < *laylandtall.peek().unwrap() {
-            println!("adding extra {}, {}: {}", x, y, lt);
-            laylandtall.push(lt);
-        }
-
-        if laylandtall.len() == 1_000_000 {
-            break;
-        }
+        laylandtall.push(Reverse(lt));
 
         if (x).checked_pow((y + 1) as u32).is_some() {
             y += 1;
@@ -40,16 +24,15 @@ fn main() {
         }
     }
 
-    println!("getting the sum");
-    for n in laylandtall.iter().rev().take(5) {
-        println!("{}", n);
+    let mut sum = 0;
+    for _ in 0..250 {
+        let smallest = laylandtall.pop().unwrap().0;
+        sum += smallest;
     }
-    let sum: u128 = laylandtall.iter().rev().take(250).map(|n| n).sum();
-    println!("{}", sum);
+    println!("sum: {}", sum);
 }
 
 fn calc_laylandtall(x: u128, y: u128) -> u128 {
-    println!("calculating x: {}, y: {}", x, y);
     x.pow(y as u32) + y.pow(x as u32)
 }
 
