@@ -1,5 +1,9 @@
 use std::{cmp::Reverse, collections::BinaryHeap};
 
+// Leylandtal er tal som kan skrivast på forma x^y + y^x for 1 < x <= y.
+// Til dømes er 17 eit Laylandtal, for det kan skrivast som 3^2+2^3.
+// Kva er summen av dei 250 minste leylandtala?
+
 fn main() {
     let mut leylandtall = BinaryHeap::new();
     let mut x = 2;
