@@ -13,6 +13,8 @@ fn main() {
 fn in_alphabetic_order(s: &str) -> bool {
     let mut previous = 'a';
     s.chars().all(|c| {
+        // å's ascii value is lower than æ and ø, thus we replace å with ù
+        let c: char = if c == 'å' { 'ù' } else { c };
         let sorted = match previous.cmp(&c) {
             Ordering::Less => true,
             Ordering::Equal => true,
@@ -24,8 +26,10 @@ fn in_alphabetic_order(s: &str) -> bool {
 }
 
 fn in_backwards_alphabetic_order(s: &str) -> bool {
-    let mut previous = 'å';
+    let mut previous: char = 'ù'; // ø+1 in ascii
     s.chars().all(|c| {
+        // å's ascii value is lower than æ and ø, thus we replace å with ù
+        let c: char = if c == 'å' { 'ù' } else { c };
         let ordered = match previous.cmp(&c) {
             Ordering::Greater => true,
             Ordering::Equal => true,
@@ -41,12 +45,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn in_alphabetic_order_should_be_true() {
+    fn test_in_alphabetic_order() {
         assert!(in_alphabetic_order("demo"));
+        assert!(in_alphabetic_order("bøø"));
+        assert!(in_alphabetic_order("æøå"));
     }
 
     #[test]
-    fn in_backwards_alphabetic_order_should_be_false() {
+    fn test_in_backwards_alphabetic_order() {
         assert!(in_backwards_alphabetic_order("trona"));
+        assert!(in_backwards_alphabetic_order("øl"));
+        assert!(in_backwards_alphabetic_order("åøæ"));
     }
 }
