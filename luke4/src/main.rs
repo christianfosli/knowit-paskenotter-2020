@@ -49,6 +49,9 @@ mod tests {
         assert!(in_alphabetic_order("demo"));
         assert!(in_alphabetic_order("bøø"));
         assert!(in_alphabetic_order("æøå"));
+
+        assert_eq!(false, in_alphabetic_order("ål"));
+        assert_eq!(false, in_alphabetic_order("øl"));
     }
 
     #[test]
@@ -56,5 +59,9 @@ mod tests {
         assert!(in_backwards_alphabetic_order("trona"));
         assert!(in_backwards_alphabetic_order("øl"));
         assert!(in_backwards_alphabetic_order("åøæ"));
+
+        assert_eq!(false, in_backwards_alphabetic_order("lå"));
+        assert_eq!(false, in_backwards_alphabetic_order("lø"));
+        assert_eq!(false, in_backwards_alphabetic_order("løa"));
     }
 }
