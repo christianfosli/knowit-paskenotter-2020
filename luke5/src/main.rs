@@ -1,23 +1,27 @@
 fn main() {
-    let sum: u32 = (1u32..10_000_000)
+    let sum: u128 = (1u128..10_000_001)
         .filter(|n| n.becomes_palindrome_after_42_iterations())
         .sum();
     println!("{}", sum);
 }
 
 trait PalindromeExtensions {
-    fn reverse(self) -> u32;
+    fn reverse(self) -> u128;
     fn is_palindrome(self) -> bool;
     fn becomes_palindrome_after_42_iterations(self) -> bool;
 }
 
-impl PalindromeExtensions for u32 {
-    fn reverse(self) -> u32 {
+impl PalindromeExtensions for u128 {
+    fn reverse(self) -> u128 {
         let mut num = self;
-        let mut rev = 0u32;
+        let mut rev = 0u128;
         while num > 0 {
             let last_digit = num % 10;
-            rev = rev * 10 + last_digit;
+            rev = rev
+                .checked_mul(10)
+                .expect("overflows during multiplication")
+                .checked_add(last_digit)
+                .expect("overflow when adding after multiplication");
             num = num / 10;
         }
 
@@ -27,21 +31,20 @@ impl PalindromeExtensions for u32 {
         self == self.reverse()
     }
     fn becomes_palindrome_after_42_iterations(self) -> bool {
-        let mut iterations = 1;
         let mut n = self;
-        loop {
-            if iterations > 42 {
-                return false;
-            }
+        for i in 1..43 {
+            n = n.checked_add(n.reverse()).expect(&format!(
+                "overflow checking {} on iteration {} : {}",
+                self, i, n
+            ));
             if n.is_palindrome() {
-                return match iterations {
+                return match i {
                     42 => true,
                     _ => false,
                 };
             }
-            n += n.reverse();
-            iterations += 1;
         }
+        false
     }
 }
 
@@ -54,12 +57,14 @@ mod tests {
         assert_eq!(42, 24.reverse());
         assert_eq!(999, 999.reverse());
         assert_eq!(12001, 10021.reverse());
+        assert_eq!(011, 110.reverse());
     }
 
     #[test]
     fn test_palindrome() {
         assert!(202.is_palindrome());
         assert!(55.is_palindrome());
+        assert!((110 + 110.reverse()).is_palindrome());
         assert_eq!(false, 123.is_palindrome());
     }
 }
