@@ -17,19 +17,12 @@ trait PalindromeExtensions {
 
 impl PalindromeExtensions for u128 {
     fn reverse(self) -> u128 {
-        let mut num = self;
-        let mut rev = 0u128;
-        while num > 0 {
-            let last_digit = num % 10;
-            rev = rev
-                .checked_mul(10)
-                .expect("overflows during multiplication")
-                .checked_add(last_digit)
-                .expect("overflow when adding after multiplication");
-            num = num / 10;
-        }
-
-        rev
+        format!("{}", self)
+            .chars()
+            .rev()
+            .collect::<String>()
+            .parse()
+            .unwrap()
     }
     fn is_palindrome(self) -> bool {
         self == self.reverse()
