@@ -29,13 +29,13 @@ impl PalindromeExtensions for u128 {
     }
     fn becomes_palindrome_after_n_iterations(self, iterations: u8) -> bool {
         let mut n = self;
-        for i in 1..(iterations + 1) {
+        for i in 0..iterations {
             n = n.checked_add(n.reverse()).expect(&format!(
                 "overflow checking {} on iteration {} : {}",
                 self, i, n
             ));
             if n.is_palindrome() {
-                return i == iterations;
+                return i == iterations - 1;
             }
         }
         false
@@ -64,7 +64,9 @@ mod tests {
 
     #[test]
     fn test_64_should_be_palindrome_after_2_iterations() {
+        assert_eq!(false, 64.becomes_palindrome_after_n_iterations(1));
         assert!(64.becomes_palindrome_after_n_iterations(2));
+        assert_eq!(false, 64.becomes_palindrome_after_n_iterations(3));
     }
 
     #[test]
